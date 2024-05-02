@@ -2,5 +2,7 @@
 title: Official Spin Laravel Template
 authors:
   - Jay Rogers (@jaydrogers)
+  - Dan Pastori (@danpastori)
+description: A basic installation of Laravel with SQLite.
 repository: https://github.com/serversideup/spin-template-laravel
 issues: https://github.com/serversideup/spin-template-laravel/issues
