@@ -1,6 +1,5 @@
 #/bin/env bash
 set -e
-set -x
 PHP_IMAGE="serversideup/php:8.3-cli"
 project_dir=${1:-laravel}
 docker pull $PHP_IMAGE
