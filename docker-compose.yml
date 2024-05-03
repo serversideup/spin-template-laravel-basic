@@ -1,0 +1,12 @@
+services:
+
+  traefik:
+    image: traefik:v3.0
+
+  php:
+    build:
+      context: .
+      target: base
+    depends_on:
+      - traefik
+      - mariadb
