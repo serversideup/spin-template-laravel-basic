@@ -9,4 +9,3 @@ services:
       target: base
     depends_on:
       - traefik
-      - mariadb

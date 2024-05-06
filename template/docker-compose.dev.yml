@@ -26,7 +26,6 @@ services:
       - development
     depends_on:
       - traefik
-      - mariadb
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.laravel.rule=HostRegexp(`laravel.dev.test`)"
@@ -42,19 +41,6 @@ services:
     working_dir: /usr/src/app/
     networks: 
       - development
-
-  mariadb:
-    networks:
-      - development
-    volumes:
-      - ./.infrastructure/volume_data/mariadb/database_data/:/var/lib/mysql
-    environment:
-        MYSQL_ROOT_PASSWORD: "rootpassword"
-        MYSQL_DATABASE: "laravel"
-        MYSQL_USER: "mysqluser"
-        MYSQL_PASSWORD: "mysqlpassword"
-    ports:
-      - "3306:3306"
 
   mailpit:
       image: axllent/mailpit
