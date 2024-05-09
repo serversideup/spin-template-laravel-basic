@@ -19,10 +19,22 @@ We have the development URL set up to work under the `*.dev.test` domain. This a
 To get your machine to recognize these domains, add the following to your `/etc/hosts` file:
 
 ```bash
-127.0.0.1 myapp.dev.test
+127.0.0.1 laravel.dev.test
 127.0.0.1 mailpit.dev.test
 ```
-Change `myapp` to your app name or whatever you would like to use. For the best experience, just make sure it ends in `.dev.test`.
+Change `laravel` to your app name or whatever you would like to use. For the best experience, just make sure it ends in `.dev.test`.
+
+### `docker-compose.dev.yml`
+This file is used for development. You'll need to make the following changes:
+
+#### Change the development Traefik domain
+If you want HTTPS to work, you need to let Let's Encrypt know what domain you are using. You can do this by changing the `docker-compose.prod.yml` file.
+
+```yaml
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.laravel.rule=Host(`laravel.dev.test`)"
+```
 
 ### `docker-compose.prod.yml`
 This file is used for production deployments. You'll need to make the following changes:
@@ -37,7 +49,7 @@ If you're using CI/CD, you'll likely want to change the image name in the `docke
 
 Set this value to the published image with your repository.
 
-#### Change the Traefik domain
+#### Change the production Traefik domain
 If you want HTTPS to work, you need to let Let's Encrypt know what domain you are using. You can do this by changing the `docker-compose.prod.yml` file.
 
 ```yaml

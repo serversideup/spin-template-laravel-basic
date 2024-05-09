@@ -1,5 +1,8 @@
 services:
   traefik:
+    ports:
+    - "80:80"
+    - "443:443"
     networks:
       development:
     volumes:
@@ -15,9 +18,6 @@ services:
       args:
         USER_ID: ${SPIN_USER_ID}
         GROUP_ID: ${SPIN_GROUP_ID}
-    ports:
-        - "80:80"
-        - "443:443"
     volumes:
       - .:/var/www/html/
     networks:
@@ -26,7 +26,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.laravel.rule=HostRegexp(`{catchall:.*}`)"
+      - "traefik.http.routers.laravel.rule=HostRegexp(`laravel.dev.test`)"
       - "traefik.http.routers.laravel.entrypoints=websecure"
       - "traefik.http.routers.laravel.tls=true"
       - "traefik.http.services.laravel.loadbalancer.server.port=8080"
