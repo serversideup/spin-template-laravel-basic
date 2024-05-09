@@ -1,23 +1,23 @@
 services:
 
   traefik:
-      networks:
-          - web-public
-      deploy:
-        update_config:
-          parallelism: 1
-          delay: 5s
-          order: stop-first
-        placement:
-          constraints:
-            - node.role==manager
-      volumes:
-        # Mount the Docker socket as read-only so Traefik can listen to events
-        - /var/run/docker.sock:/var/run/docker.sock:ro
-        - certificates:/certificates
-      configs:
-        - source: traefik
-          target: /etc/traefik/traefik.yml
+    networks:
+        - web-public
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 5s
+        order: stop-first
+      placement:
+        constraints:
+          - node.role==manager
+    volumes:
+      # Mount the Docker socket as read-only so Traefik can listen to events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certificates:/certificates
+    configs:
+      - source: traefik
+        target: /etc/traefik/traefik.yml
 
   php:
     image: ${SPIN_IMAGE_NAME} # 👈 Change this if you're not using `spin deploy`
