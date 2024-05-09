@@ -2,8 +2,6 @@ services:
   traefik:
     networks:
       development:
-        aliases:
-          - laravel.dev.test
     ports:
       - "80:80"
       - "443:443"
@@ -28,7 +26,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.laravel.rule=HostRegexp(`laravel.dev.test`)"
+      - "traefik.http.routers.laravel.rule=HostRegexp(`{catchall:.*}`)"
       - "traefik.http.routers.laravel.entrypoints=websecure"
       - "traefik.http.routers.laravel.tls=true"
       - "traefik.http.services.laravel.loadbalancer.server.port=8080"
