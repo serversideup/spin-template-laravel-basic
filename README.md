@@ -10,7 +10,7 @@ To use this template, you have [Spin](https://serversideup.net/open-source/spin/
 spin new laravel my-laravel-app
 ```
 
-> [!CATUION]  
+> [!CAUTION]
 > There are settings to change before you can use this template.
 
 ### Configure your `/etc/hosts` file
