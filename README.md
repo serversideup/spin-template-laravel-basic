@@ -49,14 +49,14 @@ If you want HTTPS to work, you need to let Let's Encrypt know what domain you ar
 Change `myapp.example.com` to your domain name.
 
 ### Verify the Traefik config name
-If you run `spin deploy`, we include a variable called `SPIN_BUILD_TIMESTAMP` that ensures the Swarm Configuration is always up to date.
+If you run `spin deploy`, we include a variable called `SPIN_TRAEFIK_CONFIG_MD5_HASH` that ensures the Swarm Configuration is always up to date.
 
 If you're not using `spin deploy`, you may need to change this value:
 
 ```yaml
 configs:
   traefik:
-    name: "traefik-${SPIN_BUILD_TIMESTAMP}.yml"
+    name: "traefik-${SPIN_TRAEFIK_CONFIG_MD5_HASH}.yml"
     file: ./.infrastructure/conf/traefik/prod/traefik.yml
 ```
 
