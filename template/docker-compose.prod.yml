@@ -24,6 +24,8 @@ services:
 
   php:
     image: ${SPIN_IMAGE_NAME} # 👈 Change this if you're not using `spin deploy`
+    environment:
+      PHP_OPCACHE_ENABLE: "1"
     networks:
       - web-public
     volumes:
@@ -61,7 +63,7 @@ services:
 
 configs:
   traefik:
-    name: "traefik-${SPIN_BUILD_TIMESTAMP}.yml"
+    name: "traefik-${SPIN_TRAEFIK_CONFIG_MD5_HASH}.yml"
     file: ./.infrastructure/conf/traefik/prod/traefik.yml
 
 volumes:
