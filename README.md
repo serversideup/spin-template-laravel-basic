@@ -4,7 +4,7 @@
 > This repo is experimental and currently under construction. Check back for more details later 👷‍♂️🚧🏗️
 
 ## Getting started
-To use this template, you have [Spin](https://serversideup.net/open-source/spin/docs) installed.
+To use this template, you must have [Spin](https://serversideup.net/open-source/spin/docs) installed.
 
 ```bash
 spin new laravel my-laravel-app
