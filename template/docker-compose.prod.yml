@@ -3,9 +3,6 @@ services:
   traefik:
       networks:
           - web-public
-      ports:
-        - "80:80"
-        - "443:443"
       deploy:
         update_config:
           parallelism: 1
@@ -15,7 +12,7 @@ services:
           constraints:
             - node.role==manager
       volumes:
-        # Mount the Docker socket so Traefik can listen to events
+        # Mount the Docker socket as read-only so Traefik can listen to events
         - /var/run/docker.sock:/var/run/docker.sock:ro
         - certificates:/certificates
       configs:

@@ -55,7 +55,7 @@ entryPoints:
 
 accessLog: {}
 log:
-  level: WARN
+  level: ERROR
 
 api:
   dashboard: true
