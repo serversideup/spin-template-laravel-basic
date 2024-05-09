@@ -22,8 +22,13 @@ ARG USER_ID
 ARG GROUP_ID
 
 # Switch to root so we can set the user ID and group ID
+USER root
+
+# Set the user ID and group ID for www-data
 RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID  && \
     docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
+
+# Drop privileges back to www-data    
 USER www-data
 
 ############################################
