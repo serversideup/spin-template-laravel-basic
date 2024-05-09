@@ -2,9 +2,6 @@ services:
 
   traefik:
     image: traefik:v2.11
-    ports:
-        - "80:80"
-        - "443:443"
 
   php:
     depends_on:
