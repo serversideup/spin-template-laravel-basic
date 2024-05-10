@@ -4,7 +4,7 @@ set -e # Exit on error
 ###############################################
 # Prepare enviornment
 ###############################################
-docker_image="serversideup/php:8.3-cli-alpine"
+docker_image="serversideup/php:8.3-cli"
 
 # Save anything passed to the script as an array
 framework_args=("$@")
