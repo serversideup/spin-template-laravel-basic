@@ -4,11 +4,22 @@ set -e # Exit on error
 ###############################################
 # Prepare enviornment
 ###############################################
-PHP_IMAGE="serversideup/php:8.3-cli"
-project_dir=${1:-"laravel"}
+docker_image="serversideup/php:8.3-cli-alpine"
+
+# Save anything passed to the script as an array
+framework_args=("$@")
+
+# Check if any arguments were passed
+if [ ${#framework_args[@]} -eq 0 ]; then
+  # Set default directory to Laravel
+  project_dir="laravel"
+else
+  # Grab the first argument as the project directory (this is what Laravel does)
+  project_dir="${framework_args[0]}"
+fi
 
 # Make sure the image is up to date before running
-docker pull $PHP_IMAGE
+docker pull $docker_image
 
 ###############################################
 # Functions
@@ -16,7 +27,7 @@ docker pull $PHP_IMAGE
 
 # Default function to run for new projects
 new(){
-  docker run --rm -w /var/www/html -v "$(pwd):/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $PHP_IMAGE composer --no-cache create-project laravel/laravel "$project_dir"
+  docker run --rm -v "$(pwd):/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --no-cache create-project laravel/laravel "${framework_args[@]}"
 
   # Initialize new projects too
   init
@@ -24,20 +35,22 @@ new(){
 
 # Required function name "init", used in "spin init" command
 init(){
-  docker run --rm -v "$project_dir:/var/www/html" -e "SHOW_WELCOME_MESSAGE=false" $PHP_IMAGE composer --working-dir=/var/www/html/ require serversideup/spin --dev
+  docker run --rm -v "$project_dir:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --working-dir=/var/www/html/ require serversideup/spin --dev
 }
 
 ###############################################
-# Main script logic (where the script starts)
+# Main: Where we call the functions
 ###############################################
 
-# Default to 'new' if no argument is provided
-func=${1:-new}
+# When spin calls this script, it already sets a variable
+# called $SPIN_ACTION (that will have a value of "new" or "init)
 
-# Check our function exists
-if declare -f "$func" > /dev/null; then
-  "$func" "${@:2}"  # Call the function with remaining arguments
+# Check to see if SPIN_ACTION function exists
+if type "$SPIN_ACTION" &>/dev/null; then
+  # Call the function
+  $SPIN_ACTION
 else
-  echo "{$BOLD}{$RED}Error: '$func' is not a valid command in $0" >&2
+  # If the function does not exist, throw an error
+  echo "The function '$SPIN_ACTION' does not exist."
   exit 1
 fi
