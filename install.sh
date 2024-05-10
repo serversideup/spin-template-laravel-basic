@@ -27,7 +27,7 @@ docker pull $docker_image
 
 # Default function to run for new projects
 new(){
-  docker run --rm -v "$(pwd):/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --no-cache create-project laravel/laravel "${framework_args[@]}"
+  docker run --rm -v "$(pwd):/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --no-cache create-project laravel/laravel "${framework_args[@]}"
 
   # Initialize new projects too
   init
@@ -35,7 +35,7 @@ new(){
 
 # Required function name "init", used in "spin init" command
 init(){
-  docker run --rm -v "$(pwd)/$project_dir:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --working-dir=/var/www/html/ require serversideup/spin --dev
+  docker run --rm -v "$(pwd)/$project_dir:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --working-dir=/var/www/html/ require serversideup/spin --dev
 }
 
 ###############################################
