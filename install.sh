@@ -35,7 +35,7 @@ new(){
 
 # Required function name "init", used in "spin init" command
 init(){
-  docker run --rm -v "$project_dir:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --working-dir=/var/www/html/ require serversideup/spin --dev
+  docker run --rm -v "$(pwd)/$project_dir:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --working-dir=/var/www/html/ require serversideup/spin --dev
 }
 
 ###############################################
@@ -44,7 +44,7 @@ init(){
 
 # When spin calls this script, it already sets a variable
 # called $SPIN_ACTION (that will have a value of "new" or "init)
-
+set -x
 # Check to see if SPIN_ACTION function exists
 if type "$SPIN_ACTION" &>/dev/null; then
   # Call the function
