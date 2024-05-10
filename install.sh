@@ -1,6 +1,5 @@
 #!/bin/env bash
 set -e # Exit on error
-set -x
 
 ###############################################
 # Prepare enviornment
