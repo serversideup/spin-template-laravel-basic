@@ -44,7 +44,7 @@ init(){
 
 # When spin calls this script, it already sets a variable
 # called $SPIN_ACTION (that will have a value of "new" or "init)
-set -x
+
 # Check to see if SPIN_ACTION function exists
 if type "$SPIN_ACTION" &>/dev/null; then
   # Call the function
