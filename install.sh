@@ -73,7 +73,7 @@ init(){
     if [[ $response =~ ^([nN][oO]|[nN])$ ]]; then
       echo ""
       echo "${BOLD}${YELLOW}[spin-template-laravel] 🚨 You will need to manually move your SQLite database to the correct path.${RESET}"
-      echo "${BOLD}${YELLOW}[spin-template-laravel] 🚨 The path is: ${RESET}/.infrastructure/volumes/sqlite/database.sqlite"
+      echo "${BOLD}${YELLOW}[spin-template-laravel] 🚨 The path is: ${RESET}/.infrastructure/volume_data/sqlite/database.sqlite"
       echo ""
     else
       init_sqlite=true
@@ -82,16 +82,16 @@ init(){
 
   if [ "$init_sqlite" == true ]; then
     # Create the SQLite database folder
-    mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite"
+    mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volume_data/sqlite"
 
     # Ensure the .env file has a proper path
     if [[ "$OSTYPE" == "darwin"* ]]; then
       # macOS uses BSD sed (different syntax than GNU sed)
       sed -i '' '/^DB_CONNECTION=sqlite$/a \
-      DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
+      DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
     else
       # Linux uses GNU sed
-      sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
+      sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
     fi
 
     # Run migrations

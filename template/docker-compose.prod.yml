@@ -39,7 +39,7 @@ services:
       - "storage_public:/var/www/html/storage/app/public/"
       - "storage_sessions:/var/www/html/storage/framework/sessions"
       - "storage_logs:/var/www/html/storage/logs"
-      - "database_sqlite:/var/www/html/.infrastructure/volumes/sqlite/"
+      - "database_sqlite:/var/www/html/.infrastructure/volume_data/sqlite/"
     deploy:
       replicas: 1
       update_config:
