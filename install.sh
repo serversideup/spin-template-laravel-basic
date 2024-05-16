@@ -62,7 +62,7 @@ init(){
   docker run --rm -v "$(pwd)/$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --verbose --working-dir=/var/www/html/ require serversideup/spin:dev-75-spin-deploy-allow-deployments-without-cicd --dev
 
   # Determine SQLite is being used
-  if grep -q 'DB_CONNECTION=sqlite' .env; then
+  if grep -q 'DB_CONNECTION=sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"; then
     sqlite_detected=true
   fi
 
