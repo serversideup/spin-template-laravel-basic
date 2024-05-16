@@ -107,3 +107,27 @@ Once the steps above are complete, you can run `spin deploy` to deploy your appl
 ```bash
 spin deploy <environment-name>
 ```
+
+## Initializing in an existing project
+If you're using an existing project with SQLite, you will need to move your database to a volume, especially if you're deploying to production with these templates.
+
+### Background
+Laravel comes with the default path of `database/database.sqlite`. This path is not ideal for Docker deployments, because the parent directory of this file contains other database files used by Laravel.
+
+For Docker Swarm (what is used in production), we need to place the SQLite in a dedicated folder so we can mount a Docker Volume to ensure the data persists.
+
+### Laravel ENV Changes
+To prepare the project, we automatically set the `DB_DATABASE` environment variable.
+
+```bash
+# Set absolute path to SQLite database from the container's perspective
+DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite
+```
+
+**NOTE:** Notice how this is the ABSOLUTE path to the database file. The reason why we use `/var/www/html` is because that is the absolute path to the file **in the eyes of the CONTAINER** (not the host machine).
+
+### Development Setup For SQLite
+Your project folder is mounted as `/var/www/html` inside the container. You simply need to ensure the `.infrastructure/volumes/sqlite/database.sqlite` file exists in your project folder on your host. Move your existing database file to this location if you want to migrate your data.
+
+### Production Setup For SQLite
+We automatically create a `database_sqlite` volume in production. This volume is mounted to `/var/www/html/.infrastructure/volumes/sqlite/` to the `php` service.
