@@ -13,28 +13,24 @@ docker pull $docker_image
 framework_args=("$@")
 
 ###############################################
-# Configure "SPIN_PROJECT_DIRECTORY" for new installs
+# Configure "SPIN_PROJECT_DIRECTORY" variable
+# This variable MUST be the ABSOLUTE path
 ###############################################
 
-# Spin needs to know what the project directory is
-# for new installations. You MUST export this variable
-# to Spin so it can complete the installation correctly.
-
+# Determine the project directory based on the SPIN_ACTION
 if [ "$SPIN_ACTION" == "new" ]; then
+  # Use the first framework argument or default to "laravel"
+  laravel_project_directory=${framework_args[0]:-laravel}
+  # Set the absolute path to the project directory
+  SPIN_PROJECT_DIRECTORY="$(pwd)/$laravel_project_directory"
 
-  # Check if any framework arguments were passed
-  if [ ${#framework_args[@]} -eq 0 ]; then
-    # Set default directory to Laravel
-    SPIN_PROJECT_DIRECTORY="laravel"
-  else
-    # Grab the first argument as the project directory (this is what Laravel does)
-    SPIN_PROJECT_DIRECTORY="${framework_args[0]}"
-  fi
-
-  # Export this variable back to Spin
-  export SPIN_PROJECT_DIRECTORY
-
+elif [ "$SPIN_ACTION" == "init" ]; then
+  # Use the current working directory for the project directory
+  SPIN_PROJECT_DIRECTORY="$(pwd)"
 fi
+
+# Export the project directory
+export SPIN_PROJECT_DIRECTORY
 
 ###############################################
 # Functions
@@ -42,9 +38,10 @@ fi
 
 # Default function to run for new projects
 new(){
+  # Use the current working directory for our install command
   docker run --rm -v "$(pwd):/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --no-cache create-project laravel/laravel "${framework_args[@]}"
 
-  # Initialize new projects too
+  # We want to initialize the project, so pass the "--force" flag to the init function
   init --force
 }
 
@@ -59,10 +56,10 @@ init(){
   fi
 
   # Install the spin package
-  docker run --rm -v "$(pwd)/$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --verbose --working-dir=/var/www/html/ require serversideup/spin:dev-75-spin-deploy-allow-deployments-without-cicd --dev
+  docker run --rm -v "$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --verbose --working-dir=/var/www/html/ require serversideup/spin:dev-75-spin-deploy-allow-deployments-without-cicd --dev
 
   # Determine SQLite is being used
-  if grep -q 'DB_CONNECTION=sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"; then
+  if grep -q 'DB_CONNECTION=sqlite' "$SPIN_PROJECT_DIRECTORY/.env"; then
     sqlite_detected=true
   fi
 
@@ -85,20 +82,20 @@ init(){
 
   if [ "$init_sqlite" == true ]; then
     # Create the SQLite database folder
-    mkdir -p "$(pwd)/$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite"
+    mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite"
 
     # Ensure the .env file has a proper path
     if [[ "$OSTYPE" == "darwin"* ]]; then
       # macOS uses BSD sed (different syntax than GNU sed)
       sed -i '' '/^DB_CONNECTION=sqlite$/a \
-      DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"
+      DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
     else
       # Linux uses GNU sed
-      sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"
+      sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
     fi
 
     # Run migrations
-    docker run --rm -v "$(pwd)/$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
+    docker run --rm -v "$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
 
   fi
 }
