@@ -121,13 +121,13 @@ To prepare the project, we automatically set the `DB_DATABASE` environment varia
 
 ```bash
 # Set absolute path to SQLite database from the container's perspective
-DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite
+DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite
 ```
 
 **NOTE:** Notice how this is the ABSOLUTE path to the database file. The reason why we use `/var/www/html` is because that is the absolute path to the file **in the eyes of the CONTAINER** (not the host machine).
 
 ### Development Setup For SQLite
-Your project folder is mounted as `/var/www/html` inside the container. You simply need to ensure the `.infrastructure/volume_data/sqlite/database.sqlite` file exists in your project folder on your host. Move your existing database file to this location if you want to migrate your data.
+Your project folder is mounted as `/var/www/html` inside the container. You simply need to ensure the `.infrastructure/volume_data/database.sqlite` file exists in your project folder on your host. Move your existing database file to this location if you want to migrate your data.
 
 ### Production Setup For SQLite
 We automatically create a `database_sqlite` volume in production. This volume is mounted to `/var/www/html/.infrastructure/volume_data/sqlite/` to the `php` service.
