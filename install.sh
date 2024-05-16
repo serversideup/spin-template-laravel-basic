@@ -44,6 +44,15 @@ fi
 new(){
   docker run --rm -v "$(pwd):/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image composer --no-cache create-project laravel/laravel "${framework_args[@]}"
 
+  # Create the SQLite database folder
+  mkdir -p "$(pwd)/$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite"
+
+  # Create the SQLite database file
+  touch "$(pwd)/$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite/database.sqlite"
+
+  # Ensure the .env file has a proper path
+  sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' .env
+
   # Initialize new projects too
   init
 }
