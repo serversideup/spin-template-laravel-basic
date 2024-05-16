@@ -91,7 +91,14 @@ init(){
     touch "$(pwd)/$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite/database.sqlite"
 
     # Ensure the .env file has a proper path
-    sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS uses BSD sed (different syntax than GNU sed)
+      sed -i '' '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"
+    else
+      # Linux uses GNU sed
+      sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"
+    fi
+
   fi
 }
 
