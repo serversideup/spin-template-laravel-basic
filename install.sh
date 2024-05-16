@@ -87,9 +87,6 @@ init(){
     # Create the SQLite database folder
     mkdir -p "$(pwd)/$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite"
 
-    # Create the SQLite database file
-    touch "$(pwd)/$SPIN_PROJECT_DIRECTORY/.infrastructure/volumes/sqlite/database.sqlite"
-
     # Ensure the .env file has a proper path
     if [[ "$OSTYPE" == "darwin"* ]]; then
       # macOS uses BSD sed (different syntax than GNU sed)
@@ -100,6 +97,8 @@ init(){
       sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volumes/sqlite/database.sqlite' "$(pwd)/$SPIN_PROJECT_DIRECTORY/.env"
     fi
 
+    # Run migrations
+    docker run --rm -v "$(pwd)/$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
 
   fi
 }
