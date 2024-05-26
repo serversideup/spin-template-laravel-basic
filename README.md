@@ -28,7 +28,7 @@ Change `laravel` to your app name or whatever you would like to use. For the bes
 This file is used for development. You'll need to make the following changes:
 
 #### Change the development Traefik domain
-If you want HTTPS to work, you need to let Let's Encrypt know what domain you are using. You can do this by changing the `docker-compose.prod.yml` file.
+If you want HTTPS to work, you need to let Let's Encrypt know what domain you are using. You can do this by changing the `docker-compose.dev.yml` file.
 
 ```yaml
       labels:
