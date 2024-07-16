@@ -62,7 +62,7 @@ If you want HTTPS to work, you need to let Let's Encrypt know what domain you ar
 Almost everyone wants to run HTTPS with a valid certificate in production for free. It's totally possible to do this with Let's Encrypt. You'll need to let Let's Encrypt which domain know what domain you are using.
 
 > [!WARNING]
-> **You must have your DNS configured correctly (with your provider like CloudFlare, NameCheap, etc) AND your server accessible to the outside world BEFORE running a deployment.** When Let's Encrypt validates you own the domain name, If you do not, Let's Encrypt will not be able to verify ownership of the domain on deployment and they will not issue you a certificate.
+> **You must have your DNS configured correctly (with your provider like CloudFlare, NameCheap, etc) AND your server accessible to the outside world BEFORE running a deployment.** When Let's Encrypt validates you own the domain name, it will attempt to connect to your server over HTTP from the outside world using the [HTTP-01 challenge](https://letsencrypt.org/docs/challenge-types/). If your server is not accessible during this process, they will not issue a certificate.
 
 ```yaml
 # File to update:
