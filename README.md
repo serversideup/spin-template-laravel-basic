@@ -90,7 +90,7 @@ certificatesResolvers:
 
 Change `changeme@example.com` to a valid email address.
 
-## Initializing in an existing project
+## ⚡️ Initializing in an existing project
 If you're using an existing project with SQLite, you will need to move your database to a volume, especially if you're deploying to production with these templates.
 
 ### Background
@@ -114,7 +114,7 @@ Your project folder is mounted as `/var/www/html` inside the container. You simp
 ### Production Setup For SQLite
 We automatically create a `database_sqlite` volume in production. This volume is mounted to `/var/www/html/.infrastructure/volume_data/sqlite/` to the `php` service.
 
-## Advanced configuration
+## 👨‍🔬 Advanced configuration
 If you'd like to further customize your experience, here are some helpful tips:
 
 ### Trusted SSL certificates in development
