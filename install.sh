@@ -80,24 +80,26 @@ init(){
     fi
   fi
 
-if [ "$init_sqlite" == true ]; then
-  # Create the SQLite database folder
-  mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volume_data/sqlite"
+  if [ "$init_sqlite" == true ]; then
+    # Create the SQLite database folder
+    mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volume_data/sqlite"
 
-  # Ensure the .env file has a proper path
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS uses BSD sed (different syntax than GNU sed)
-    sed -i '' '/^DB_CONNECTION=sqlite$/a\
-DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite\'"$'\n'" "$SPIN_PROJECT_DIRECTORY/.env"
-  else
-    # Linux uses GNU sed
-    sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite\n' "$SPIN_PROJECT_DIRECTORY/.env"
+    # Ensure the .env file has a proper path
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS uses BSD sed (different syntax than GNU sed)
+      sed -i '' '/^DB_CONNECTION=sqlite$/a\
+  DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite
+  ' "$SPIN_PROJECT_DIRECTORY/.env"
+    else
+      # Linux uses GNU sed
+      sed -i '/^DB_CONNECTION=sqlite$/a DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite' "$SPIN_PROJECT_DIRECTORY/.env"
+      sed -i 's/database.sqlite/database.sqlite\n/' "$SPIN_PROJECT_DIRECTORY/.env"
+    fi
+
+    # Run migrations
+    docker run --rm -v "$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
+
   fi
-
-  # Run migrations
-  docker run --rm -v "$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
-
-fi
 }
 
 ###############################################
