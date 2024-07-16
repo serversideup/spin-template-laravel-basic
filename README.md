@@ -9,14 +9,14 @@ This is the official Spin template for Laravel that helps you get up and running
 - SQLite
 
 ## Getting started
+> [!CAUTION]
+> There are settings to change before you can use this template.
+
 To use this template, you must have [Spin](https://serversideup.net/open-source/spin/docs) installed.
 
 ```bash
 spin new laravel my-laravel-app
 ```
-
-> [!CAUTION]
-> There are settings to change before you can use this template.
 
 ### Configure your `/etc/hosts` file
 We have the development URL set up to work under the `*.dev.test` domain. This also includes wildcard certificates that will trust connections on this domain as well.
