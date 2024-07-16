@@ -1,7 +1,12 @@
-# Official Spin Laravel Template
+<p align="center">
+		<a href="https://serversideup.net/open-source/spin/"><img src=".github/images/header.png" width="1200" alt="Spin Header" /></a>
+</p>
 
-> [!WARNING]  
-> This repo is experimental and currently under construction. Check back for more details later 👷‍♂️🚧🏗️
+# Official Spin Laravel Template
+This is the official Spin template for Laravel that helps you get up and running with:
+
+- Latest version of Laravel
+- SQLite
 
 ## Getting started
 To use this template, you must have [Spin](https://serversideup.net/open-source/spin/docs) installed.
