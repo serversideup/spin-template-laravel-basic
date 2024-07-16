@@ -88,7 +88,7 @@ init(){
     if [[ "$OSTYPE" == "darwin"* ]]; then
       # macOS uses BSD sed (different syntax than GNU sed)
       sed -i '' '/^DB_CONNECTION=sqlite$/a\
-  DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite
+DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite
   ' "$SPIN_PROJECT_DIRECTORY/.env"
     else
       # Linux uses GNU sed
