@@ -71,7 +71,7 @@ services:
 
 configs:
   traefik:
-    name: "traefik-${SPIN_TRAEFIK_CONFIG_MD5_HASH}.yml"
+    name: "traefik-${SPIN_MD5_HASH_TRAEFIK_YML}.yml"
     file: ./.infrastructure/conf/traefik/prod/traefik.yml
 
 volumes:
