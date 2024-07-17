@@ -90,6 +90,21 @@ certificatesResolvers:
 
 Change `changeme@example.com` to a valid email address.
 
+### 5️⃣ Determine if you want to use the "AUTORUN" feature
+By default, we have [Laravel Automations](https://serversideup.net/open-source/docker-php/docs/laravel/laravel-automations) configured to run with the [serversideup/php](https://serversideup.net/open-source/docker-php/) Docker image.
+
+If you do not want this behavior, you can remove the `AUTORUN_ENABLED` environment variable from the `php` service in the `docker-compose.prod.yml` file.
+
+```yml
+# File to update:
+# docker-compose.prod.yml
+
+  php:
+    image: ${SPIN_IMAGE_NAME}
+    environment:
+      - AUTORUN_ENABLED: "true" # 👈 Remove this line if you don't want Laravel Automations
+```
+
 ## ⚡️ Initializing in an existing project
 If you're using an existing project with SQLite, you will need to move your database to a volume, especially if you're deploying to production with these templates.
 
@@ -103,7 +118,7 @@ To prepare the project, we automatically set the `DB_DATABASE` environment varia
 
 ```bash
 # Set absolute path to SQLite database from the container's perspective
-DB_DATABASE=/var/www/html/.infrastructure/volume_data/database.sqlite
+DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite
 ```
 
 **NOTE:** Notice how this is the ABSOLUTE path to the database file. The reason why we use `/var/www/html` is because that is the absolute path to the file **in the eyes of the CONTAINER** (not the host machine).
