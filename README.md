@@ -2,7 +2,7 @@
 		<a href="https://serversideup.net/open-source/spin/"><img src=".github/images/header.png" width="1200" alt="Spin Header" /></a>
 </p>
 
-# Official Spin Laravel Template
+# 🏆 Official Spin Laravel Template
 This is the official Spin template for Laravel that helps you get up and running with:
 
 - Latest version of Laravel
