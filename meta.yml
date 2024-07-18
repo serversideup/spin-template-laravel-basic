@@ -1,8 +1,8 @@
 ---
-title: Laravel Basic Template (SQLite)
+title: Laravel Basic Template
 authors:
   - Jay Rogers (@jaydrogers)
   - Dan Pastori (@danpastori)
-description: A basic installation of Laravel with SQLite.
+description: The official Laravel Spin template when you run `spin new laravel` from CLI.
 repository: https://github.com/serversideup/spin-template-laravel
 issues: https://github.com/serversideup/spin-template-laravel/issues
