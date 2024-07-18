@@ -73,7 +73,7 @@ init(){
     if [[ $response =~ ^([nN][oO]|[nN])$ ]]; then
       echo ""
       echo "${BOLD}${YELLOW}[spin-template-laravel] 🚨 You will need to manually move your SQLite database to the correct path.${RESET}"
-      echo "${BOLD}${YELLOW}[spin-template-laravel] 🚨 The path is: ${RESET}/.infrastructure/volume_data/database.sqlite"
+      echo "${BOLD}${YELLOW}[spin-template-laravel] 🚨 The path is: ${RESET}/.infrastructure/volume_data/sqlite/database.sqlite"
       echo ""
     else
       init_sqlite=true
