@@ -33,6 +33,7 @@ services:
     environment:
       PHP_OPCACHE_ENABLE: "1"
       AUTORUN_ENABLED: "true" # 👈 Remove this line if you don't want Laravel Automations
+      APP_ENV: "${SPIN_DEPLOYMENT_ENVIRONMENT}" # 👈 Remove this if you're not using `spin deploy`
     networks:
       - web-public
     volumes:
