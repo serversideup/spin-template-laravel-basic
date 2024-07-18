@@ -129,6 +129,30 @@ Your project folder is mounted as `/var/www/html` inside the container. You simp
 ### Production Setup For SQLite
 We automatically create a `database_sqlite` volume in production. This volume is mounted to `/var/www/html/.infrastructure/volume_data/sqlite/` to the `php` service.
 
+## 🚀 Running Laravel Specific Commands
+In development, you may want to run artisan commands or composer commands. We can use [`spin run`](https://serversideup.net/open-source/spin/docs/command-reference/run) or [`spin exec`](https://serversideup.net/open-source/spin/docs/command-reference/exec) to run these commands.
+
+```bash
+spin run php php artisan migrate
+```
+The above command will create a new container to run the `php artisan migrate` command. You can change `run` for `exec` if you'd like to run the command in an existing, **running** container.
+
+```bash
+spin run php composer install
+```
+
+The above command will create a new container to run the `composer install` command. This is helpful if you need to install new packages or update your `composer.lock` file.
+
+If you need to attach your terminal to the container's shell, you can use `spin exec`:
+
+```bash
+spin exec -it php sh
+```
+
+This will attach your terminal to the `php` container's shell. If you're using an Alpine image, `sh` is the default shell. If you're using a Debian image, you can use `bash` instead of `sh`.
+
+Feel free to run any commands you'd like with `spin run` or `spin exec`. The above examples should help give you patterns what you need to do.
+
 ## 👨‍🔬 Advanced configuration
 If you'd like to further customize your experience, here are some helpful tips:
 
