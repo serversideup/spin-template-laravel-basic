@@ -59,7 +59,7 @@ services:
         window: 120s
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.my-php-app.rule=Host(`myapp.example.com`)"
+        - "traefik.http.routers.my-php-app.rule=Host(`${SPIN_APP_DOMAIN}`)"
         - "traefik.http.routers.my-php-app.entrypoints=websecure"
         - "traefik.http.routers.my-php-app.tls=true"
         - "traefik.http.routers.my-php-app.tls.certresolver=letsencryptresolver"

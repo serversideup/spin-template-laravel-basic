@@ -31,35 +31,16 @@ Once the steps above are complete, you can run `spin deploy` to deploy your appl
 spin deploy <environment-name>
 ```
 
+### 🌎 Default Development URLs
+- **Laravel**: [http://localhost](http://localhost)
+- **Mailpit**: [http://localhost:8025](http://localhost:8025)
+
 ## 👉 Required Changes Before Using This Template
 > [!CAUTION]
 > You need to make changes before using this template.
 
-### 1️⃣ Configure your `/etc/hosts` file
-We have the development URL set up to work under the `*.dev.test` domain. This also includes wildcard certificates that will trust connections on this domain as well.
-
-To get your machine to recognize these domains, add the following to your `/etc/hosts` file:
-
-```bash
-127.0.0.1 laravel.dev.test
-127.0.0.1 mailpit.dev.test
-```
-Change `laravel` to your app name or whatever you would like to use. For the best experience, just make sure it ends in `.dev.test`.
-
-### 2️⃣ Set your development domain in Traefik
-If you want HTTPS to work, you need to let Let's Encrypt know what domain you are using. You can do this by changing the `docker-compose.prod.yml` file.
-
-```yaml
-# File to update:
-# docker-compose.dev.yml
-
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.laravel.rule=Host(`laravel.dev.test`)"
-```
-
-### 3️⃣ Set your production URL
-Almost everyone wants to run HTTPS with a valid certificate in production for free. It's totally possible to do this with Let's Encrypt. You'll need to let Let's Encrypt which domain know what domain you are using.
+### Set your production URL
+Almost everyone wants to run HTTPS with a valid certificate in production for free and it's totally possible to do this with Let's Encrypt. You'll need to let Let's Encrypt which domain know what domain you are using.
 
 > [!WARNING]
 > **You must have your DNS configured correctly (with your provider like CloudFlare, NameCheap, etc) AND your server accessible to the outside world BEFORE running a deployment.** When Let's Encrypt validates you own the domain name, it will attempt to connect to your server over HTTP from the outside world using the [HTTP-01 challenge](https://letsencrypt.org/docs/challenge-types/). If your server is not accessible during this process, they will not issue a certificate.
@@ -70,12 +51,12 @@ Almost everyone wants to run HTTPS with a valid certificate in production for fr
 
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.my-php-app.rule=Host(`myapp.example.com`)"
+        - "traefik.http.routers.my-php-app.rule=Host(`${SPIN_APP_DOMAIN}`)"
 ```
 
-Change `myapp.example.com` to your production domain name.
+By default, if you're using `spin deploy` it will use the `APP_URL` from your `.env.<environment>` file to generate the `SPIN_APP_DOMAIN`. You can also be explicit and change `${SPIN_APP_DOMAIN}` to `myapp.example.com`.
 
-### 4️⃣ Set your email contact for Let's Encrypt certificates
+### Set your email contact for Let's Encrypt certificates
 Let's encrypt requires an email address to issue certificates. You can set this in the Traefik configuration for production.
 
 ```yml
@@ -88,9 +69,9 @@ certificatesResolvers:
       email: "changeme@example.com"
 ```
 
-Change `changeme@example.com` to a valid email address.
+Change `changeme@example.com` to a valid email address. This email address will be used by Let's Encrypt to send you notifications about your certificates.
 
-### 5️⃣ Determine if you want to use the "AUTORUN" feature
+### Determine if you want to use the "AUTORUN" feature
 By default, we have [Laravel Automations](https://serversideup.net/open-source/docker-php/docs/laravel/laravel-automations) configured to run with the [serversideup/php](https://serversideup.net/open-source/docker-php/) Docker image.
 
 If you do not want this behavior, you can remove the `AUTORUN_ENABLED` environment variable from the `php` service in the `docker-compose.prod.yml` file.

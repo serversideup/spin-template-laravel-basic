@@ -26,7 +26,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.laravel.rule=HostRegexp(`laravel.dev.test`)"
+      - "traefik.http.routers.laravel.rule=HostRegexp(`localhost`)"
       - "traefik.http.routers.laravel.entrypoints=websecure"
       - "traefik.http.routers.laravel.tls=true"
       - "traefik.http.services.laravel.loadbalancer.server.port=8080"
@@ -44,15 +44,8 @@ services:
       image: axllent/mailpit
       networks:
         - development
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.mailpit.rule=Host(`mailpit.dev.test`)"
-        - "traefik.http.routers.mailpit.entrypoints=websecure"
-        - "traefik.http.routers.mailpit.tls=true"
-        - "traefik.http.services.mailpit.loadbalancer.server.port=8025"
-        - "traefik.http.services.mailpit.loadbalancer.server.scheme=http"
-      depends_on:
-        - traefik
+      ports:
+        - "8025:8025"
 
 networks:
   development:
