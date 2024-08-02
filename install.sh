@@ -47,7 +47,6 @@ new(){
 
 # Required function name "init", used in "spin init" command
 init(){
-  set -x
   local init_sqlite=false
   local sqlite_detected=false
 
