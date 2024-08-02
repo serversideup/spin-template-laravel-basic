@@ -39,6 +39,15 @@ spin deploy <environment-name>
 > [!CAUTION]
 > You need to make changes before using this template.
 
+### Create an `.env.production` file
+By default, this template is configured to use `spin deploy` which defaults to the `production` environment. You need to create an `.env.production` file in the root of your project.
+
+```bash
+cp .env.example .env.production
+```
+
+Configure your `.env.production` file with the appropriate values for your production environment. Ensure `APP_URL` is set correctly. Spin will use the domain from that variable as the production URL by default.
+
 ### Set your production URL
 Almost everyone wants to run HTTPS with a valid certificate in production for free and it's totally possible to do this with Let's Encrypt. You'll need to let Let's Encrypt which domain know what domain you are using.
 
