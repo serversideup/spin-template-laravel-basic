@@ -100,7 +100,7 @@ If you do not want this behavior, you can remove the `AUTORUN_ENABLED` environme
 # docker-compose.prod.yml
 
   php:
-    image: ${SPIN_IMAGE_NAME}
+    image: ${SPIN_IMAGE_DOCKERFILE}
     environment:
       - AUTORUN_ENABLED: "true" # 👈 Remove this line if you don't want Laravel Automations
 ```
@@ -169,7 +169,7 @@ If you're using CI/CD (and NOT using `spin deploy`), you'll likely want to chang
 
 ```yaml
   php:
-    image: ${SPIN_IMAGE_NAME} # 👈 Change this if you're not using `spin deploy`
+    image: ${SPIN_IMAGE_DOCKERFILE} # 👈 Change this if you're not using `spin deploy`
 ```
 
 Set this value to the published image with your image repository.
