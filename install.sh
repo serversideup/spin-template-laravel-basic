@@ -36,91 +36,6 @@ export SPIN_PROJECT_DIRECTORY
 # Functions
 ###############################################
 
-ensure_line_in_file() {
-    local mode="update"
-    local files=()
-    local search=""
-    local replace=""
-    local after=""
-
-    # Parse arguments
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --update)
-                mode="update"
-                shift
-                ;;
-            --after)
-                mode="after"
-                shift
-                ;;
-            --file)
-                shift
-                files+=("$1")
-                shift
-                ;;
-            *)
-                if [[ -z $search ]]; then
-                    search="$1"
-                elif [[ -z $replace ]]; then
-                    replace="$1"
-                elif [[ $mode == "after" && -z $after ]]; then
-                    after="$replace"
-                    replace="$1"
-                else
-                    echo "Too many arguments"
-                    return 1
-                fi
-                shift
-                ;;
-        esac
-    done
-
-    # Check if at least one file is specified
-    if [ ${#files[@]} -eq 0 ]; then
-        echo "No files specified. Use --file argument to specify files."
-        return 1
-    fi
-
-    # Process each file
-    for file in "${files[@]}"; do
-        # Check if file exists
-        if [ ! -f "$file" ]; then
-            echo "File not found: $file"
-            continue
-        fi
-
-        # Handle different modes
-        if [[ $mode == "update" ]]; then
-            if grep -q "$search" "$file"; then
-                if [[ "$OSTYPE" == "darwin"* ]]; then
-                    # macOS
-                    sed -i '' "s|.*$search.*|$replace|" "$file"
-                else
-                    # Linux and others
-                    sed -i "s|.*$search.*|$replace|" "$file"
-                fi
-            else
-                echo "$replace" >> "$file"
-            fi
-        elif [[ $mode == "after" ]]; then
-            if grep -q "$search" "$file"; then
-                if [[ "$OSTYPE" == "darwin"* ]]; then
-                    # macOS
-                    sed -i '' "/^$search/a\\
-$replace
-" "$file"
-                else
-                    # Linux and others
-                    sed -i "/^$search/a $replace" "$file"
-                fi
-            else
-                echo "Search string not found in $file: $search"
-            fi
-        fi
-    done
-}
-
 # Default function to run for new projects
 new(){
   # Use the current working directory for our install command
@@ -169,8 +84,9 @@ init(){
     # Create the SQLite database folder
     mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volume_data/sqlite"
 
-    ensure_line_in_file --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" "DB_CONNECTION" "DB_CONNECTION=sqlite"
-    ensure_line_in_file --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" --after "DB_CONNECTION" "DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite"
+    # Use the "line_in_file" function from Spin to ensure the correct values are set
+    line_in_file --replace --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" "DB_CONNECTION" "DB_CONNECTION=sqlite"
+    line_in_file --replace --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" --after "DB_CONNECTION" "DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite"
 
     # Run migrations
     docker run --rm -v "$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
