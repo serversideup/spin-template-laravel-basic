@@ -85,8 +85,8 @@ init(){
     mkdir -p "$SPIN_PROJECT_DIRECTORY/.infrastructure/volume_data/sqlite"
 
     # Use the "line_in_file" function from Spin to ensure the correct values are set
-    line_in_file --replace --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" "DB_CONNECTION" "DB_CONNECTION=sqlite"
-    line_in_file --replace --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" --after "DB_CONNECTION" "DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite"
+    line_in_file --action replace --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" "DB_CONNECTION" "DB_CONNECTION=sqlite"
+    line_in_file --action after --file "$SPIN_PROJECT_DIRECTORY/.env" --file "$SPIN_PROJECT_DIRECTORY/.env.example" "DB_CONNECTION" "DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite"
 
     # Run migrations
     docker run --rm -v "$SPIN_PROJECT_DIRECTORY:/var/www/html" --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" -e COMPOSER_CACHE_DIR=/dev/null -e "SHOW_WELCOME_MESSAGE=false" $docker_image php /var/www/html/artisan migrate --force
