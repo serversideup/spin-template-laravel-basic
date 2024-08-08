@@ -53,4 +53,7 @@ COPY --chown=www-data:www-data . /var/www/html
 RUN mkdir -p /var/www/html/.infrastructure/volume_data/sqlite/ && \
     chown -R www-data:www-data /var/www/html/.infrastructure/volume_data/sqlite/
 
+# Ensure PHP-FPM gracefully stops
+STOPSIGNAL SIGQUIT
+
 USER www-data
