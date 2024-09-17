@@ -24,6 +24,7 @@ We have a "[Spin Pro Laravel Template](https://getspin.pro)" that includes more 
 | Laravel Horizon | ❌ | ✅ |
 | Laravel Reverb | ❌ | ✅ |
 | Laravel Queues | ❌ | ✅ |
+| Mailpit over HTTPS | ❌ | ✅ |
 | Support | ✅ Discord, GitHub Discussions | ✅ Private Community Support |
 
 If you're interested in the Pro version, you visit [https://getspin.pro](https://getspin.pro) for more information.
