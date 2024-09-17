@@ -25,6 +25,7 @@ We have a "[Spin Pro Laravel Template](https://getspin.pro)" that includes more 
 | Laravel Reverb | ❌ | ✅ |
 | Laravel Queues | ❌ | ✅ |
 | Mailpit over HTTPS | ❌ | ✅ |
+| Node Package Manager | `yarn` | `yarn` or `npm` |
 | Support | ✅ Discord, GitHub Discussions | ✅ Private Community Support |
 
 If you're interested in the Pro version, you visit [https://getspin.pro](https://getspin.pro) for more information.
