@@ -16,9 +16,9 @@ add_php_extensions() {
     echo "${BLUE}Adding custom PHP extensions...${RESET}"
     local dockerfile="$project_dir/Dockerfile"
     
-    # Check if Dockerfile.php exists
+    # Check if Dockerfile exists
     if [ ! -f "$dockerfile" ]; then
-        echo "Error: Dockerfile.php not found in $project_dir"
+        echo "Error: $dockerfile not found."
         return 1
     fi
     
@@ -29,7 +29,7 @@ add_php_extensions() {
     local extensions_string="${php_extensions[*]}"
     line_in_file --action replace --file "$dockerfile" "# RUN install-php-extensions" "RUN install-php-extensions $extensions_string"
     
-    echo "Custom PHP extensions added to Dockerfile.php"
+    echo "Custom PHP extensions added."
 }
 
 display_php_extensions_menu() {
@@ -155,7 +155,7 @@ display_php_extensions_menu
 
 # Set PHP Version if init
 if [[ "$SPIN_ACTION" == "init" ]]; then
-    line_in_file --action replace --file "$project_dir/Dockerfile.php" "FROM serversideup" "FROM serversideup/php:${SPIN_PHP_VERSION}-fpm-nginx-alpine as base"
+    line_in_file --action replace --file "$project_dir/Dockerfile" "FROM serversideup" "FROM serversideup/php:${SPIN_PHP_VERSION}-fpm-nginx-alpine as base"
 fi
 
 # Add PHP Extensions if available
