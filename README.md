@@ -9,7 +9,7 @@ This is the official Spin template for Laravel that helps you get up and running
 - SQLite
 
 ## Looking for more features?
-We have a "[Spin Pro Laravel Template](https://getspinpro.com)" that includes more features for Laravel Pros:
+We have a "[Spin Pro Laravel Template](https://getspin.pro)" that includes more features for Laravel Pros:
 
 | Feature | Spin Basic Laravel Template | Spin Pro Laravel Template |
 |---------|---------------------------|-----------|
@@ -26,7 +26,7 @@ We have a "[Spin Pro Laravel Template](https://getspinpro.com)" that includes mo
 | Laravel Queues | ❌ | ✅ |
 | Support | ✅ Discord, GitHub Discussions | ✅ Private Community Support |
 
-If you're interested in the Pro version, you visit [https://getspinpro.com](https://getspinpro.com) for more information.
+If you're interested in the Pro version, you visit [https://getspin.pro](https://getspin.pro) for more information.
 
 ## Default configuration
 To use this template, you must have [Spin](https://serversideup.net/open-source/spin/docs) installed.
