@@ -12,6 +12,18 @@ project_dir=${SPIN_PROJECT_DIRECTORY:-"$(pwd)/template"}
 php_dockerfile="Dockerfile"
 docker_compose_database_migration="false"
 
+# Initialize the service variables
+horizon=""
+queues=""
+reverb=""
+schedule=""
+sqlite=""
+mysql=""
+mariadb=""
+postgresql=""
+redis=""
+use_github_actions=""
+
 ###############################################
 # Functions
 ###############################################
