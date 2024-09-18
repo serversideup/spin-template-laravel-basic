@@ -99,8 +99,27 @@ prompt_php_version() {
     local php_versions=("8.3" "8.2" "8.1" "8.0" "7.4")
     local php_choice
 
+    # If SPIN_ACTION is "new", filter out versions below 8.2
+    if [ "$SPIN_ACTION" == "new" ]; then
+        php_versions=("8.3" "8.2")
+    fi
+
     while true; do
         clear
+        printf '%s      ___     %s      ___   %s            %s      ___     %s\n'      $RAINBOW $RESET
+        printf '%s     /  /\    %s     /  /\  %s    ___     %s     /__/\    %s\n'      $RAINBOW $RESET
+        printf '%s    /  /:/_   %s    /  /::\ %s   /  /\    %s     \  \:\   %s\n'      $RAINBOW $RESET
+        printf '%s   /  /:/ /\  %s   /  /:/\:\%s  /  /:/    %s      \  \:\  %s\n'      $RAINBOW $RESET
+        printf '%s  /  /:/ /::\ %s  /  /:/~/:/%s /__/::\    %s  _____\__\:\ %s\n'      $RAINBOW $RESET
+        printf '%s /__/:/ /:/\:\%s /__/:/ /:/ %s \__\/\:\__ %s /__/::::::::\%s\n'      $RAINBOW $RESET
+        printf '%s \  \:\/:/~/:/%s \  \:\/:/  %s    \  \:\/\%s \  \:\~~\~~\/%s\n'      $RAINBOW $RESET
+        printf '%s  \  \::/ /:/ %s  \  \::/   %s     \__\::/%s  \  \:\  ~~~ %s\n'      $RAINBOW $RESET
+        printf '%s   \__\/ /:/  %s   \  \:\   %s     /__/:/ %s   \  \:\     %s\n'      $RAINBOW $RESET
+        printf '%s     /__/:/   %s    \  \:\  %s     \__\/  %s    \  \:\    %s\n'      $RAINBOW $RESET
+        printf '%s     \__\/    %s     \__\/  %s            %s     \__\/    %s\n'      $RAINBOW $RESET
+        printf '\n'
+        printf "%s %s %s\n" "${BOLD}🚀 Let's get Laravel launched!"
+        printf '%s\n' $RESET
         echo "${BOLD}${YELLOW}👉 What PHP version would you like to use?${RESET}"
         
         for i in "${!php_versions[@]}"; do
@@ -116,7 +135,7 @@ prompt_php_version() {
         
         read -n 1 php_choice
         case $php_choice in
-            [1-5]) SPIN_PHP_VERSION="${php_versions[$((php_choice-1))]}" ;;
+            [1-${#php_versions[@]}]) SPIN_PHP_VERSION="${php_versions[$((php_choice-1))]}" ;;
             "") 
                 [[ -n "$SPIN_PHP_VERSION" ]] && break
                 echo "${BOLD}${RED}Please select a PHP version.${RESET}"
@@ -180,8 +199,6 @@ init(){
       delete_matching_pattern "$item"
     done
 
-    prompt_php_version
-
     if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
       echo "Re-installing composer dependencies..."
 
@@ -212,6 +229,8 @@ init(){
 ###############################################
 # Main: Where we call the functions
 ###############################################
+
+prompt_php_version
 
 # When spin calls this script, it already sets a variable
 # called $SPIN_ACTION (that will have a value of "new" or "init")
