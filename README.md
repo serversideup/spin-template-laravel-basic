@@ -8,6 +8,28 @@ This is the official Spin template for Laravel that helps you get up and running
 - Latest version of Laravel
 - SQLite
 
+## Looking for more features?
+We have a "[Spin Pro Laravel Template](https://getspin.pro)" that includes more features for Laravel Pros:
+
+| Feature | Spin Basic Laravel Template | Spin Pro Laravel Template |
+|---------|---------------------------|-----------|
+| Price | Free | $199/once (lifetime access) |
+| Automated Deployments with GitHub Actions | ❌ | ✅ |
+| Local Development SSL | ❌ | ✅ (Trusted) |
+| Tunnel Support | ❌ | ✅ |
+| SMTP Trapping | ❌ | ✅ (Mailpit) |
+| Vite over HTTPS | ❌ | ✅ |
+| Databases | SQLite | ✅ MariaDB, MySQL, PostgreSQL, SQLite |
+| Redis | ❌ | ✅ |
+| Laravel Horizon | ❌ | ✅ |
+| Laravel Reverb | ❌ | ✅ |
+| Laravel Queues | ❌ | ✅ |
+| Mailpit over HTTPS | ❌ | ✅ |
+| Node Package Manager | `yarn` | `yarn` or `npm` |
+| Support | ✅ Discord, GitHub Discussions | ✅ Private Community Support |
+
+If you're interested in the Pro version, you visit [https://getspin.pro](https://getspin.pro) for more information.
+
 ## Default configuration
 To use this template, you must have [Spin](https://serversideup.net/open-source/spin/docs) installed.
 
