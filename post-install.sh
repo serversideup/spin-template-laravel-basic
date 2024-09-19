@@ -14,7 +14,7 @@ docker_compose_database_migration="false"
 
 # Initialize the service variables
 horizon=""
-queues=""
+queue=""
 reverb=""
 schedule=""
 sqlite=""
@@ -128,7 +128,7 @@ install_node_dependencies() {
 
 process_selections() { 
     [[ $sqlite ]] && configure_sqlite
-
+    
     if [ "$spin_template_type" = "pro" ]; then
         [[ $schedule ]] && configure_schedule
         [[ $mysql ]] && configure_mysql
@@ -136,10 +136,11 @@ process_selections() {
         [[ $postgresql ]] && configure_postgresql
         [[ $redis ]] && configure_redis
         [[ $horizon ]] && configure_horizon
-        [[ $queues ]] && configure_queues
+        [[ $queue ]] && configure_queue
         [[ $reverb ]] && configure_reverb
         [[ $use_github_actions ]] && configure_github_actions
     fi
+    echo "Services configured."
 }
 
 select_database() {
@@ -211,7 +212,7 @@ select_features() {
         if [ "$spin_template_type" = "pro" ]; then
             echo -e "${schedule:+$BOLD$BLUE}1) Task Scheduling${RESET}"
             echo -e "${horizon:+$BOLD$BLUE}2) Horizon${RESET}"
-            echo -e "${queues:+$BOLD$BLUE}3) Queues (without Redis)${RESET}"
+            echo -e "${queue:+$BOLD$BLUE}3) Queues (without Redis)${RESET}"
             echo -e "${reverb:+$BOLD$BLUE}4) Reverb${RESET}"
         else
             echo -e "${DIM}1) Task Scheduling (Pro)${RESET}"
@@ -243,7 +244,7 @@ select_features() {
                 ;;
             3) 
                 if [ "$spin_template_type" = "pro" ]; then
-                    [[ $queues ]] && queues="" || queues="1"
+                    [[ $queue ]] && queue="" || queue="1"
                 fi
                 ;;
             4) 
