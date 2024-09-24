@@ -198,31 +198,6 @@ init(){
     for item in "${spin_project_files[@]}"; do
       delete_matching_pattern "$item"
     done
-
-    if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
-      echo "Re-installing composer dependencies..."
-
-      docker pull "$SPIN_PHP_DOCKER_IMAGE"
-
-      # Install Spin
-      docker run --rm \
-        -v "$(pwd):/var/www/html" \
-        --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" \
-        -e COMPOSER_CACHE_DIR=/dev/null \
-        -e "SHOW_WELCOME_MESSAGE=false" \
-        "$SPIN_PHP_DOCKER_IMAGE" \
-        composer require serversideup/spin --dev
-
-      # Use the current working directory for our install command
-      docker run --rm \
-        -v "$(pwd):/var/www/html" \
-        --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" \
-        -e COMPOSER_CACHE_DIR=/dev/null \
-        -e "SHOW_WELCOME_MESSAGE=false" \
-        "$SPIN_PHP_DOCKER_IMAGE" \
-        composer install
-    fi
-
   fi
 }
 
