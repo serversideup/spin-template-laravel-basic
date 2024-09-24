@@ -440,6 +440,36 @@ if [ ${#php_extensions[@]} -gt 0 ]; then
     add_php_extensions
 fi
 
+# Install Composer dependencies
+if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
+    docker pull "$SPIN_PHP_DOCKER_IMAGE"
+
+    if [[ "$SPIN_ACTION" == "init" ]]; then
+        echo "Re-installing composer dependencies..."
+        docker compose run --rm --build \
+            -e COMPOSER_CACHE_DIR=/dev/null \
+            -e "SHOW_WELCOME_MESSAGE=false" \
+            php \
+            composer install
+
+        echo "Installing Spin..."
+        docker compose run --rm --build \
+            -e COMPOSER_CACHE_DIR=/dev/null \
+            -e "SHOW_WELCOME_MESSAGE=false" \
+                php \
+                composer require serversideup/spin --dev
+    else
+        echo "Installing Spin..."
+        docker run --rm \
+            -v "$project_dir:/var/www/html" \
+            --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" \
+            -e COMPOSER_CACHE_DIR=/dev/null \
+            -e "SHOW_WELCOME_MESSAGE=false" \
+            "$SPIN_PHP_DOCKER_IMAGE" \
+            composer require serversideup/spin --dev
+    fi
+fi
+
 # Process the user selections
 process_selections
 
