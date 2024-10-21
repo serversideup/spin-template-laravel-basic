@@ -34,6 +34,7 @@ services:
       PHP_OPCACHE_ENABLE: "1"
       AUTORUN_ENABLED: "true" # 👈 Remove this line if you don't want Laravel Automations
       APP_ENV: "${SPIN_DEPLOYMENT_ENVIRONMENT}" # 👈 Remove this if you're not using `spin deploy`
+      HEALTHCHECK_PATH: "/up" # Use Laravel's built-in health route
     networks:
       - web-public
     volumes:
@@ -66,7 +67,7 @@ services:
         - "traefik.http.services.my-php-app.loadbalancer.server.port=8080"
         - "traefik.http.services.my-php-app.loadbalancer.server.scheme=http"
         # Health check
-        - "traefik.http.services.my-php-app.loadbalancer.healthcheck.path=/healthcheck"
+        - "traefik.http.services.my-php-app.loadbalancer.healthcheck.path=/up"
         - "traefik.http.services.my-php-app.loadbalancer.healthcheck.interval=30s"
         - "traefik.http.services.my-php-app.loadbalancer.healthcheck.timeout=5s"
         - "traefik.http.services.my-php-app.loadbalancer.healthcheck.scheme=http"
