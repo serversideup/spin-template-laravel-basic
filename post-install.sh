@@ -2,7 +2,7 @@
 
 # Capture Spin Variables
 SPIN_ACTION=${SPIN_ACTION:-"install"}
-SPIN_PHP_VERSION="${SPIN_PHP_VERSION:-8.3}"
+SPIN_PHP_VERSION="${SPIN_PHP_VERSION:-8.4}"
 SPIN_PHP_DOCKER_IMAGE="${SPIN_PHP_DOCKER_IMAGE:-serversideup/php:${SPIN_PHP_VERSION}-cli}"
 
 # Set project variables
@@ -103,6 +103,17 @@ configure_sqlite() {
             echo "SQLite database already exists in the correct location. Skipping migration."
         fi
     fi
+}
+
+initialize_git_repository() {
+    local current_dir=""
+    current_dir=$(pwd)
+
+    cd "$project_dir" || exit
+    echo "Initializing Git repository..."
+    git init
+
+    cd "$current_dir" || exit
 }
 
 install_node_dependencies() {
@@ -453,7 +464,7 @@ if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
             composer install
 
         echo "Installing Spin..."
-        docker compose run --rm --build \
+        docker compose run --rm --build --no-deps --remove-orphans \
             -e COMPOSER_CACHE_DIR=/dev/null \
             -e "SHOW_WELCOME_MESSAGE=false" \
                 php \
@@ -485,15 +496,9 @@ if [ "$spin_template_type" == "pro" ]; then
     configure_mailpit
 fi
 
-# Configure Let's Encrypt
-prompt_and_update_file \
-    --title "🔐 Configure Let's Encrypt" \
-    --details "Let's Encrypt requires an email address to send notifications about SSL renewals." \
-    --prompt "Please enter your email" \
-    --file "$project_dir/.infrastructure/conf/traefik/prod/traefik.yml" \
-    --search-default "changeme@example.com" \
-    --success-msg "Updated \".infrastructure/conf/traefik/prod/traefik.yml\" with your email."
-
+# Configure Server Contact
+line_in_file --action exact --ignore-missing --file "$project_dir/.infrastructure/conf/traefik/prod/traefik.yml" "changeme@example.com" "$SERVER_CONTACT"
+line_in_file --action exact --ignore-missing --file "$project_dir/.spin.yml" "changeme@example.com" "$SERVER_CONTACT"
 
 if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
     install_node_dependencies
@@ -501,6 +506,10 @@ if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
     if [[ "$docker_compose_database_migration" == "true" ]]; then
         initialize_database_service
     fi
+fi
+
+if [[ ! -d "$project_dir/.git" ]]; then
+    initialize_git_repository
 fi
 
 # Export actions so it's available to the main Spin script

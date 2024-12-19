@@ -8,7 +8,7 @@ set -e # Exit on error
 laravel_framework_args=("$@")
 
 # Default PHP Docker Image
-SPIN_PHP_VERSION="${SPIN_PHP_VERSION:-8.3}"
+SPIN_PHP_VERSION="${SPIN_PHP_VERSION:-8.4}"
 SPIN_PHP_DOCKER_IMAGE="${SPIN_PHP_DOCKER_IMAGE:-serversideup/php:${SPIN_PHP_VERSION}-cli}"
 export SPIN_PHP_DOCKER_IMAGE
 
@@ -23,6 +23,8 @@ declare -a spin_project_files=(
   "docker-compose*"
   "Dockerfile*"
 )
+
+SERVER_CONTACT=""
 
 ###############################################
 # Configure "SPIN_PROJECT_DIRECTORY" variable
@@ -96,12 +98,12 @@ project_files_exist() {
 }
 
 prompt_php_version() {
-    local php_versions=("8.3" "8.2" "8.1" "8.0" "7.4")
+    local php_versions=("8.4" "8.3" "8.2" "8.1" "8.0" "7.4")
     local php_choice
 
     # If SPIN_ACTION is "new", filter out versions below 8.2
     if [ "$SPIN_ACTION" == "new" ]; then
-        php_versions=("8.3" "8.2")
+        php_versions=("8.4" "8.3" "8.2")
     fi
 
     while true; do
@@ -206,6 +208,14 @@ init(){
 ###############################################
 
 prompt_php_version
+SERVER_CONTACT=$(prompt_and_update_file \
+    --title "🤖 Server Contact" \
+    --details "Set an email contact who should be notified for Let's Encrypt SSL renewals and other system alerts." \
+    --prompt "Please enter your email" \
+    --output-only \
+    --validate "email")
+
+export SERVER_CONTACT
 
 # When spin calls this script, it already sets a variable
 # called $SPIN_ACTION (that will have a value of "new" or "init")
