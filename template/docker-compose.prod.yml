@@ -35,6 +35,7 @@ services:
       AUTORUN_ENABLED: "true" # 👈 Remove this line if you don't want Laravel Automations
       APP_ENV: "${SPIN_DEPLOYMENT_ENVIRONMENT}" # 👈 Remove this if you're not using `spin deploy`
       HEALTHCHECK_PATH: "/up" # Use Laravel's built-in health route
+      SSL_MODE: full
     networks:
       - web-public
     volumes:
@@ -64,8 +65,8 @@ services:
         - "traefik.http.routers.my-php-app.entrypoints=websecure"
         - "traefik.http.routers.my-php-app.tls=true"
         - "traefik.http.routers.my-php-app.tls.certresolver=letsencryptresolver"
-        - "traefik.http.services.my-php-app.loadbalancer.server.port=8080"
-        - "traefik.http.services.my-php-app.loadbalancer.server.scheme=http"
+        - "traefik.http.services.my-php-app.loadbalancer.server.port=8443"
+        - "traefik.http.services.my-php-app.loadbalancer.server.scheme=https"
         # Health check
         - "traefik.http.services.my-php-app.loadbalancer.healthcheck.path=/up"
         - "traefik.http.services.my-php-app.loadbalancer.healthcheck.interval=30s"
