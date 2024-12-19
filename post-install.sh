@@ -51,7 +51,7 @@ configure_sqlite() {
     local service_name="sqlite"
     local init_sqlite=true
     local laravel_default_sqlite_database_path="$project_dir/database/database.sqlite"
-    local spin_sqllite_datbase_path="$project_dir/.infrastructure/volume_data/sqlite/database.sqlite"
+    local spin_sqllite_database_path="$project_dir/.infrastructure/volume_data/sqlite/database.sqlite"
 
     if [ "$spin_template_type" == "pro" ]; then
         merge_blocks "$service_name"
@@ -69,10 +69,10 @@ configure_sqlite() {
         if [[ $response =~ ^([nN][oO]|[nN])$ ]]; then
             echo ""
             echo "${BOLD}${YELLOW}🚨 You will need to manually move your SQLite database to the correct path.${RESET}"
-            echo "${BOLD}${YELLOW}🚨 The path is: ${RESET}${spin_sqllite_datbase_path}"
+            echo "${BOLD}${YELLOW}🚨 The path is: ${RESET}${spin_sqllite_database_path}"
             echo ""
             init_sqlite=false
-            add_user_todo_item "Move your SQLite database to \"${spin_sqllite_datbase_path}\"."
+            add_user_todo_item "Move your SQLite database to \"${spin_sqllite_database_path}\"."
         fi
     fi
 
@@ -85,11 +85,11 @@ configure_sqlite() {
         line_in_file --action after --file "$project_dir/.env" --file "$project_dir/.env.example" "DB_CONNECTION" "DB_DATABASE=/var/www/html/.infrastructure/volume_data/sqlite/database.sqlite"
 
         # Check if the default Laravel SQLite database exists and the Spin SQLite database doesn't
-        if [[ -f "$laravel_default_sqlite_database_path" && ! -f "$spin_sqllite_datbase_path" ]]; then
+        if [[ -f "$laravel_default_sqlite_database_path" && ! -f "$spin_sqllite_database_path" ]]; then
             echo "${BLUE}Moving existing SQLite database to new location...${RESET}"
-            mv "$laravel_default_sqlite_database_path" "$spin_sqllite_datbase_path"
+            mv "$laravel_default_sqlite_database_path" "$spin_sqllite_database_path"
             echo "SQLite database moved successfully."
-        elif [[ ! -f "$laravel_default_sqlite_database_path" && ! -f "$spin_sqllite_datbase_path" && "$instal" ]]; then
+        elif [[ ! -f "$laravel_default_sqlite_database_path" && ! -f "$spin_sqllite_database_path" && "$instal" ]]; then
             echo "No existing SQLite database found. Running migrations to create a new one..."
             # Run the migrations to create the SQLite database
             docker run --rm \

@@ -2,7 +2,7 @@
 set -e # Exit on error
 
 ###############################################
-# Prepare enviornment
+# Prepare environment
 ###############################################
 # Capture input arguments
 laravel_framework_args=("$@")
