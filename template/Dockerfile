@@ -32,6 +32,23 @@ RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID  && \
 USER www-data
 
 ############################################
+# Development with xdebug Image
+############################################
+FROM development AS development-xdebug
+
+USER root
+
+RUN install-php-extensions xdebug
+
+RUN echo "xdebug.mode=debug,coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo "xdebug.start_with_request=trigger" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+USER www-data
+
+############################################
 # CI image
 ############################################
 FROM base AS ci

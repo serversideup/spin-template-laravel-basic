@@ -14,7 +14,7 @@ services:
 
   php:
     build:
-      target: development
+      target: development-xdebug
       args:
         USER_ID: ${SPIN_USER_ID}
         GROUP_ID: ${SPIN_GROUP_ID}
