@@ -22,6 +22,7 @@ schedule=""
 sqlite=""
 mysql=""
 mariadb=""
+meilisearch=""
 postgresql=""
 redis=""
 use_github_actions=""
@@ -139,11 +140,13 @@ process_selections() {
     [[ $sqlite ]] && configure_sqlite
     
     if [ "$spin_template_type" = "pro" ]; then
+        sleep 0.5  # Small delay before processing service configurations
         [[ $schedule ]] && configure_schedule
         [[ $mysql ]] && configure_mysql
         [[ $mariadb ]] && configure_mariadb
         [[ $postgresql ]] && configure_postgresql
         [[ $redis ]] && configure_redis
+        [[ $meilisearch ]] && configure_meilisearch
         [[ $horizon ]] && configure_horizon
         [[ $queue ]] && configure_queue
         [[ $reverb ]] && configure_reverb
@@ -232,11 +235,13 @@ select_features() {
             echo -e "${horizon:+$BOLD$BLUE}2) Horizon${RESET}"
             echo -e "${queue:+$BOLD$BLUE}3) Queues (without Redis)${RESET}"
             echo -e "${reverb:+$BOLD$BLUE}4) Reverb${RESET}"
+            echo -e "${meilisearch:+$BOLD$BLUE}5) Meilisearch${RESET}"
         else
             echo -e "${DIM}1) Task Scheduling (Pro)${RESET}"
             echo -e "${DIM}2) Horizon (Pro)${RESET}"
             echo -e "${DIM}3) Queues (Pro)${RESET}"
             echo -e "${DIM}4) Reverb (Pro)${RESET}"
+            echo -e "${DIM}5) Meilisearch (Pro)${RESET}"
         fi
         show_spin_pro_notice
         echo "Press a number to select/deselect."
@@ -268,6 +273,11 @@ select_features() {
             4) 
                 if [ "$spin_template_type" = "pro" ]; then
                     [[ $reverb ]] && reverb="" || reverb="1"
+                fi
+                ;;
+            5) 
+                if [ "$spin_template_type" = "pro" ]; then
+                    [[ $meilisearch ]] && meilisearch="" || meilisearch="1"
                 fi
                 ;;
             '') break ;;
@@ -462,6 +472,7 @@ show_spin_pro_notice() {
         echo
     fi
 }
+
 ###############################################
 # Main
 ###############################################
@@ -473,7 +484,7 @@ select_javascript_package_manager
 select_database
 if [ "$docker_compose_database_migration" = "true" ] && [ "$spin_template_type" == "pro" ]; then
     select_auto_migrations
-    line_in_file --action after --file "$project_dir/docker-compose.prod.yml" "      AUTORUN_ENABLED: \"true\"" "      AUTORUN_LARAVEL_MIGRATION: \"false\""
+    line_in_file --action after --file "$project_dir/docker-compose.prod.yml" "      AUTORUN_ENABLED: \"true\"" "      AUTORUN_LARAVEL_MIGRATION: \"true\""
 fi
 select_github_actions
 
@@ -494,7 +505,7 @@ if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
 
     if [[ "$SPIN_ACTION" == "init" ]]; then
         echo "Re-installing composer dependencies..."
-        docker compose run --rm --build \
+        docker compose run --rm --no-deps --build \
             -e COMPOSER_CACHE_DIR=/dev/null \
             -e "SHOW_WELCOME_MESSAGE=false" \
             php \
