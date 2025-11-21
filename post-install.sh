@@ -2,13 +2,14 @@
 
 # Capture Spin Variables
 SPIN_ACTION=${SPIN_ACTION:-"install"}
-SPIN_PHP_VERSION="${SPIN_PHP_VERSION:-8.4}"
-SPIN_PHP_DOCKER_IMAGE="${SPIN_PHP_DOCKER_IMAGE:-serversideup/php:${SPIN_PHP_VERSION}-cli}"
+SPIN_PHP_VERSION="${SPIN_PHP_VERSION:-8.5}"
+SPIN_PHP_VARIATION="${SPIN_PHP_VARIATION:-fpm-nginx}"
+SPIN_PHP_DOCKER_INSTALLER_IMAGE="${SPIN_PHP_DOCKER_INSTALLER_IMAGE:-serversideup/php:${SPIN_PHP_VERSION}-cli}"
+SPIN_PHP_DOCKER_BASE_IMAGE="${SPIN_PHP_DOCKER_BASE_IMAGE:-serversideup/php:${SPIN_PHP_VERSION}-fpm-nginx-alpine}"
 
 # Set project variables
 spin_template_type="open-source"
 spin_database="sqlite"
-docker_compose_database_migration="false"
 javascript_package_manager="yarn"
 php_dockerfile="Dockerfile"
 project_dir=${SPIN_PROJECT_DIRECTORY:-"$(pwd)/template"}
@@ -25,6 +26,7 @@ mariadb=""
 meilisearch=""
 postgresql=""
 redis=""
+octane=""
 use_github_actions=""
 
 ###############################################
@@ -96,7 +98,7 @@ configure_sqlite() {
                 --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" \
                 -e COMPOSER_CACHE_DIR=/dev/null \
                 -e "SHOW_WELCOME_MESSAGE=false" \
-                "$SPIN_PHP_DOCKER_IMAGE" \
+                "$SPIN_PHP_DOCKER_INSTALLER_IMAGE" \
                 php /var/www/html/artisan migrate --force
         else
             echo "SQLite database already exists in the correct location. Skipping migration."
@@ -150,6 +152,7 @@ process_selections() {
         [[ $horizon ]] && configure_horizon
         [[ $queue ]] && configure_queue
         [[ $reverb ]] && configure_reverb
+        [[ $octane ]] && configure_octane
         [[ $use_github_actions ]] && configure_github_actions
     fi
     echo "Services configured."
@@ -191,19 +194,16 @@ select_database() {
             2) 
                 if [ "$spin_template_type" = "pro" ]; then
                     [[ $mysql ]] && mysql="" || mysql="1"
-                    docker_compose_database_migration="true"
                 fi
                 ;;
             3) 
                 if [ "$spin_template_type" = "pro" ]; then
                     [[ $mariadb ]] && mariadb="" || mariadb="1"
-                    docker_compose_database_migration="true"
                 fi
                 ;;
             4) 
                 if [ "$spin_template_type" = "pro" ]; then
                     [[ $postgresql ]] && postgresql="" || postgresql="1"
-                    docker_compose_database_migration="true"
                 fi
                 ;;
             5) 
@@ -236,12 +236,20 @@ select_features() {
             echo -e "${queue:+$BOLD$BLUE}3) Queues (without Redis)${RESET}"
             echo -e "${reverb:+$BOLD$BLUE}4) Reverb${RESET}"
             echo -e "${meilisearch:+$BOLD$BLUE}5) Meilisearch${RESET}"
+            
+            # Octane - only available with FrankenPHP
+            if [[ "$SPIN_PHP_VARIATION" == "frankenphp" ]]; then
+                echo -e "${octane:+$BOLD$BLUE}6) Laravel Octane${RESET}"
+            else
+                echo -e "${DIM}6) Laravel Octane (Requires FrankenPHP)${RESET}"
+            fi
         else
             echo -e "${DIM}1) Task Scheduling (Pro)${RESET}"
             echo -e "${DIM}2) Horizon (Pro)${RESET}"
             echo -e "${DIM}3) Queues (Pro)${RESET}"
             echo -e "${DIM}4) Reverb (Pro)${RESET}"
             echo -e "${DIM}5) Meilisearch (Pro)${RESET}"
+            echo -e "${DIM}6) Laravel Octane (Pro)${RESET}"
         fi
         show_spin_pro_notice
         echo "Press a number to select/deselect."
@@ -278,6 +286,22 @@ select_features() {
             5) 
                 if [ "$spin_template_type" = "pro" ]; then
                     [[ $meilisearch ]] && meilisearch="" || meilisearch="1"
+                fi
+                ;;
+            6) 
+                if [ "$spin_template_type" = "pro" ]; then
+                    if [[ "$SPIN_PHP_VARIATION" == "frankenphp" ]]; then
+                        [[ $octane ]] && octane="" || octane="1"
+                    else
+                        # Show a helpful message if FrankenPHP is not selected
+                        clear
+                        echo "${BOLD}${RED}⚠️  FrankenPHP Required${RESET}"
+                        echo ""
+                        echo "Laravel Octane requires FrankenPHP to be selected as your web server."
+                        echo "FrankenPHP was introduced in the first prompt of this setup."
+                        echo ""
+                        read -n 1 -s -r -p "${BOLD}${YELLOW}Press any key to continue...${RESET}"
+                    fi
                 fi
                 ;;
             '') break ;;
@@ -411,33 +435,6 @@ select_php_extensions() {
     done
 }
 
-select_auto_migrations() {
-    while true; do
-        clear
-        echo "${BOLD}${YELLOW}Would you like to automatically run migrations?${RESET}"
-        if [ "$docker_compose_database_migration" = "true" ] || [ -z "$docker_compose_database_migration" ]; then
-            echo -e "${BOLD}${BLUE}1) Yes, run migrations on container start${RESET}"
-            echo "2) No, I'll run migrations manually"
-        else
-            echo "1) Yes, run migrations on container start"
-            echo -e "${BOLD}${BLUE}2) No, I'll run migrations manually${RESET}"
-        fi
-        echo "Press a number to select."
-        echo "Press ${BOLD}${BLUE}ENTER${RESET} to continue."
-
-        read -s -n 1 key
-        case $key in
-            1) docker_compose_database_migration="true" ;;
-            2) docker_compose_database_migration="false" ;;
-            '') break ;;
-        esac
-    done
-
-    if [ "$docker_compose_database_migration" = "false" ]; then
-        add_user_todo_item "You need to run \"spin run php artisan migrate\" manually to run migrations."
-    fi
-}
-
 set_colors() {
     if [[ -t 1 ]]; then
         RAINBOW="
@@ -482,17 +479,13 @@ select_php_extensions
 select_features
 select_javascript_package_manager
 select_database
-if [ "$docker_compose_database_migration" = "true" ] && [ "$spin_template_type" == "pro" ]; then
-    select_auto_migrations
-    line_in_file --action after --file "$project_dir/docker-compose.prod.yml" "      AUTORUN_ENABLED: \"true\"" "      AUTORUN_LARAVEL_MIGRATION: \"true\""
-fi
 select_github_actions
 
 # Clean up the screen before moving forward
 clear
 
 # Set PHP Version of Project
-line_in_file --action replace --file "$project_dir/$php_dockerfile" "FROM serversideup" "FROM serversideup/php:${SPIN_PHP_VERSION}-fpm-nginx-alpine AS base"
+line_in_file --action replace --file "$project_dir/$php_dockerfile" "FROM serversideup" "FROM ${SPIN_PHP_DOCKER_BASE_IMAGE} AS base"
 
 # Add PHP Extensions if available
 if [ ${#php_extensions[@]} -gt 0 ]; then
@@ -501,7 +494,7 @@ fi
 
 # Install Composer dependencies
 if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
-    docker pull "$SPIN_PHP_DOCKER_IMAGE"
+    docker pull "$SPIN_PHP_DOCKER_INSTALLER_IMAGE"
 
     if [[ "$SPIN_ACTION" == "init" ]]; then
         echo "Re-installing composer dependencies..."
@@ -524,7 +517,7 @@ if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
             --user "${SPIN_USER_ID}:${SPIN_GROUP_ID}" \
             -e COMPOSER_CACHE_DIR=/dev/null \
             -e "SHOW_WELCOME_MESSAGE=false" \
-            "$SPIN_PHP_DOCKER_IMAGE" \
+            "$SPIN_PHP_DOCKER_INSTALLER_IMAGE" \
             composer require serversideup/spin --dev
     fi
 fi
@@ -550,8 +543,7 @@ line_in_file --action exact --ignore-missing --file "$project_dir/.spin.yml" "ch
 
 if [[ "$SPIN_INSTALL_DEPENDENCIES" == "true" ]]; then
     install_node_dependencies
-
-    if [[ "$docker_compose_database_migration" == "true" ]]; then
+    if [[ "$spin_template_type" == "pro" ]]; then
         initialize_database_service
     fi
 fi
